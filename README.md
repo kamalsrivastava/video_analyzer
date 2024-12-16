@@ -203,7 +203,7 @@ Here are some snapshots of the project's results:
 ![File Uploaded](frontend/src/assets/filleuploaded.png)
 
 ### 4. Wrong File Type detected:
-![Compliance Violation](frontend/src/assets/wrongfile.png)
+![Compliance Violation](frontend/src/assets/wrong_file.png)
 
 
 ### 5. File Under Processing:
