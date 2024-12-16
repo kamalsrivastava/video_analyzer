@@ -197,11 +197,22 @@ Here are some snapshots of the project's results:
 ### 1. Upload Video:
 ![Home Page](frontend/src/assets/homepage.png)
 
-### 2. Detect Harmful Content:
-![Harmful Content](assets/harmful_content.png)
+### 2. No File Uploaded:
+![No file found](frontend/src/assets/nofile.png)
 
-### 3. Flag Compliance Violations:
-![Compliance Violation](assets/compliance_violation.png)
+### 3. File Uploaded Successfully:
+![File Uploaded](frontend/src/assets/filleuploaded.png)
+
+### 4. Wrong File Type detected:
+![Compliance Violation](frontend/src/assets/wrongfile.png)
+
+
+### 5. File Under Processing:
+![File Processing](frontend/src/assets/fileprocessing.png)
+
+### 6. Result Page:
+![File Processing](frontend/src/assets/Result1.png)
+![File Processing](frontend/src/assets/Result2.png)
 
 
 ---
