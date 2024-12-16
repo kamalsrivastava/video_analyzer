@@ -102,7 +102,8 @@ def detect_audio_issues(transcription):
     sentences = group_words_into_sentences(transcription)
     for sentence, start_time in sentences:
         result = bert_model(sentence)[0]  # Use BERT model for classification
-        if result['label'].lower() in disallowed_categories and result['score'] > 0.4:  # Confidence threshold
+        print("Bert Model Response", result)
+        if result['label'].lower() in disallowed_categories and result['score'] > 0:  # Confidence threshold
             issues.append({
                 "issue": "Hate speech detected",
                 "timestamp": format_time(start_time)
@@ -166,17 +167,19 @@ def analyze_video_frames(video_path):
         frame_count += 1
 
     cap.release()
+    print("All the categories of yolo model", yolo_model.names)
     return issues
 
 def is_frame_violent(frame):
     # Perform inference
-    results = yolo_model(frame)  # YOLO inference on the frame
+    results = yolo_model(frame, conf=0.1)  # YOLO inference on the frame
     detections = results[0].boxes  # Updated structure for YOLO's results
     
     # Check each detection
     for detection in detections:
         class_id = int(detection.cls)  # Get the class ID
         class_name = yolo_model.names[class_id]  # Map class ID to class name
+        print("Yolo Class found is: ", class_name)
         if class_name in ["knife", "gun", "blood"]:  # Violent objects to flag
             return True
     return False

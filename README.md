@@ -203,15 +203,15 @@ Here are some snapshots of the project's results:
 ![File Uploaded](frontend/src/assets/filleuploaded.png)
 
 ### 4. Wrong File Type detected:
-![Compliance Violation](frontend/src/assets/wrongfile.png)
+![Compliance Violation](frontend/src/assets/wrong_file.png)
 
 
 ### 5. File Under Processing:
 ![File Processing](frontend/src/assets/fileprocessing.png)
 
 ### 6. Result Page:
-![File Processing](frontend/src/assets/Result1.png)
-![File Processing](frontend/src/assets/Result2.png)
+![Result Page](frontend/src/assets/Result1.png)
+![Result Page](frontend/src/assets/Result2.png)
 
 
 ---

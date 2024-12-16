@@ -10,9 +10,8 @@ import openai
 from app.config import OPENAI_API_KEY
 from app.config import DEEPGRAM_API_KEY
 
-
+# Initialize Blueprint and API keys
 upload_blueprint = Blueprint('upload', __name__)
-
 deepgram = Deepgram(DEEPGRAM_API_KEY)
 openai.api_key = OPENAI_API_KEY
 
@@ -43,9 +42,9 @@ def upload_file():
             if(file.filename.endswith('.mp4')):
                 mp3_path = convert_mp4_to_mp3(file_path)
                 transcription = asyncio.run(transcribe_audio(mp3_path))
-                sentiment = generate_sentiment(transcription)
+                # sentiment = generate_sentiment(transcription)
                 analysis_result = analyze_video(file_path)
-                analysis_result['sentiment'] = sentiment
+                # analysis_result['sentiment'] = sentiment
                 print("The result received", analysis_result)
                 return jsonify(analysis_result)
             # Transcribe audio using Deepgram
