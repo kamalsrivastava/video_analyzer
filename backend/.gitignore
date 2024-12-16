@@ -1,0 +1,62 @@
+# General files to ignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.env
+*.DS_Store
+
+# Flask Backend
+backend/uploads/         # Ignore uploaded files directory
+backend/instance/        # Flask instance folder (if used)
+backend/tests/__pycache__/
+backend/tests/*.pyc
+backend/app/__pycache__/
+backend/app/*.pyc
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+venv.bak/
+
+# Python packages
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node.js / React Frontend
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+frontend/node_modules/
+frontend/build/          # Ignore the build folder
+frontend/dist/           # If dist folder is generated
+frontend/.cache/         # Caching folder (like Babel or Webpack)
+frontend/public/*.map    # Source maps if not needed
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# System files
+Thumbs.db
+desktop.ini
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-generated files
+*.swp
+*~

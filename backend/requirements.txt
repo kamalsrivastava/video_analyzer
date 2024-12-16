@@ -1,0 +1,16 @@
+flask
+flask-cors
+werkzeug
+requests
+openai
+moviepy
+textblob
+pytest
+deepgram-sdk==2.12.0
+openai==0.28
+moviepy==0.2.2.13
+opencv-python
+transformers
+ultralytics
+torch
+numpy
