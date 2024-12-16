@@ -98,7 +98,6 @@ This system leverages **AI** to analyze **video** and **audio** content for vari
    - **Frontend**:
      ```bash
      cd frontend
-     npm install
      npm start
      ```
 
