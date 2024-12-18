@@ -4,6 +4,7 @@ import axios from "../utils/api";
 import video from "../assets/uploadvideo.png";
 import audio from "../assets/uploadaudio.png";
 import checkmark from "../assets/checkmark.png"; // Add a checkmark image in your assets folder
+import gif from "../assets/loader.gif"
 
 function FileUploader({ setAnalysisResult }) {
   const [file, setFile] = useState(null);
@@ -201,12 +202,12 @@ const styles = {
     zIndex: 1000, // Ensure it's above everything
   },
   loader: {
-    border: "8px solid #f3f3f3", // Light gray
-    borderTop: "8px solid #007bff", // Blue
-    borderRadius: "50%",
-    width: "50px",
-    height: "50px",
-    animation: "spin 1s linear infinite",
+    width: "100px", // Adjust the size of your GIF
+    height: "100px",
+    backgroundImage: `url(${gif})`, // Use the imported GIF as a background
+    backgroundSize: "cover", // Ensure the GIF fills the container
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
   },
 };
 

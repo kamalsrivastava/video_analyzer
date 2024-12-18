@@ -202,7 +202,7 @@ def create_issues_list(audio_issues, video_issues):
 def generate_summary(transcription, audio_issues, video_issues):
     try:
         # Generate a text summary of the transcription (using OpenAI or another summarization method)
-        summary_text = "Summary of audio transcription and detected issues:\n\n"
+        summary_text = "Detected issues:\n\n"
         if transcription:
             summary_text += "Audio Transcription Summary:\n"
             summary_text += f"- {len(transcription)} words transcribed.\n"
