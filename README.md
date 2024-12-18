@@ -11,6 +11,7 @@ This system leverages **AI** to analyze **video** and **audio** content for vari
   - Detect unusual pauses or gaps in speech.
   - Flag compliance violations (e.g., disallowed words, sensitive information).
   - Identify hate speech, violent language, NSFW terms, and other harmful content.
+  - Identify violent imagery in the video
   - Classify sentiment and tone of the audio content.
   
 - **Summarization**:
