@@ -4,13 +4,15 @@ import asyncio
 from moviepy.editor import VideoFileClip
 from transformers import pipeline
 from ultralytics import YOLO
+import openai
 from deepgram import Deepgram
-from app.config import DEEPGRAM_API_KEY
+from app.config import DEEPGRAM_API_KEY, OPENAI_API_KEY
 
 # Initialize Deepgram and Models
 deepgram = Deepgram(DEEPGRAM_API_KEY)
 bert_model = pipeline("text-classification", model="unitary/toxic-bert")  # BERT for hate speech detection
 yolo_model = YOLO("yolov8n.pt")  # YOLO for violent imagery detection (lightweight model)
+openai.api_key = OPENAI_API_KEY
 
 def analyze_video(file_path):
     try:
@@ -18,18 +20,20 @@ def analyze_video(file_path):
         audio_path = extract_audio_from_video(file_path)
 
         # Step 2: Analyze audio
-        transcription, audio_issues = asyncio.run(analyze_audio(audio_path))
+        paragraph, audio_issues = asyncio.run(analyze_audio(audio_path))
 
         # Step 3: Analyze video
         video_issues = analyze_video_frames(file_path)
 
         # Step 4: Combine issues and generate response
         issues_list = create_issues_list(audio_issues, video_issues)
-        summary = generate_summary(transcription, audio_issues, video_issues)
+        summary = generate_summary(paragraph)
+        sentiment = generate_sentiment(paragraph)
 
         return {
             "issues": issues_list,  # Combined issues as per the requirement
-            "summary": summary      # Full summary text
+            "summary": summary,      # Full summary text
+            "sentiment": sentiment,
         }
 
     except Exception as e:
@@ -51,12 +55,13 @@ def extract_audio_from_video(video_path):
 async def analyze_audio(audio_path):
     try:
         # Transcribe audio
-        transcription = await transcribe_audio(audio_path)
+        transcription, paragraph = await transcribe_audio(audio_path)
+        print("In Analyze audio", transcription, paragraph)
 
         # Detect issues in transcription
         audio_issues = detect_audio_issues(transcription)
 
-        return transcription, audio_issues
+        return paragraph, audio_issues
     except Exception as e:
         print(f"Error analyzing audio: {e}")
         raise
@@ -74,7 +79,8 @@ async def transcribe_audio(file_path):
         }
         response = await deepgram.transcription.prerecorded(source, options)
         transcript = response['results']['channels'][0]['alternatives'][0]['words']
-        return transcript  # List of words with timestamps
+        paragraph = " ".join([word['word'] for word in transcript])
+        return transcript, paragraph  # List of words with timestamps
     except Exception as e:
         print(f"Error with Deepgram transcription: {e}")
         raise
@@ -108,7 +114,7 @@ def detect_audio_issues(transcription):
                 "issue": "Hate speech detected",
                 "timestamp": format_time(start_time)
             })
-
+    print("In  detect audio issues" ,issues)
     return issues
 
 def group_words_into_sentences(transcription):
@@ -165,14 +171,14 @@ def analyze_video_frames(video_path):
                 })
 
         frame_count += 1
+    print("Inside analyze video frames", issues)
 
     cap.release()
-    print("All the categories of yolo model", yolo_model.names)
     return issues
 
 def is_frame_violent(frame):
     # Perform inference
-    results = yolo_model(frame, conf=0.1)  # YOLO inference on the frame
+    results = yolo_model(frame, conf=0.4)  # YOLO inference on the frame
     detections = results[0].boxes  # Updated structure for YOLO's results
     
     # Check each detection
@@ -187,35 +193,63 @@ def is_frame_violent(frame):
 # Step 4: Combine issues into a single list
 def create_issues_list(audio_issues, video_issues):
     issues_list = []
+    print("In list creation", audio_issues, video_issues)
 
     # Add audio issues to the list
     for issue in audio_issues:
-        issues_list.append(f"{issue['issue']} detected at {issue['timestamp']}")
+        issues_list.append(f"{issue['issue']} detected at {issue['timestamp']} ")
 
     # Add video issues to the list
     for issue in video_issues:
-        issues_list.append(f"{issue['issue']} detected at {issue['timestamp']}")
+        issues_list.append(f"{issue['issue']} detected at {issue['timestamp']} ")
 
     return issues_list
 
 # Updated Summary Generator
-def generate_summary(transcription, audio_issues, video_issues):
+def generate_summary(transcription):
     try:
         # Generate a text summary of the transcription (using OpenAI or another summarization method)
-        summary_text = "Detected issues:\n\n"
-        if transcription:
-            summary_text += "Audio Transcription Summary:\n"
-            summary_text += f"- {len(transcription)} words transcribed.\n"
-
-        # Include detected issues
-        if audio_issues or video_issues:
-            summary_text += "\nDetected Issues:\n"
-            for issue in audio_issues + video_issues:
-                summary_text += f"- {issue['issue']} at {issue['timestamp']}\n"
-
-        return summary_text
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role" : "user",
+                    "content" : f"Summarize the following text: \"{transcription}\""
+                },
+            ]
+        )
+        summary = response['choices'][0]['message']['content']
+        print("In summary", transcription, summary)
+        return summary
     except Exception as e:
         print(f"Error generating summary: {e}")
+        raise
+
+
+def generate_sentiment(transcription):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "user",
+                    "content": (
+                        f"Analyze the overall sentiment of the following text in one word only. "
+                        f"Do not provide any explanation. Respond with a single word like happy, sad, angry, excited, neutral, etc. "
+                        f"The text is: \"{transcription}\""
+                    ),
+                },
+            ]
+        )
+        # Extract the content and ensure it's a single word
+        sentiment = response['choices'][0]['message']['content'].strip()
+        print("In sentiment generation", transcription, sentiment)
+        # Post-process: Validate and reduce to a single word
+        sentiment = sentiment.split()[0].lower()  # Ensure it's one word and lowercase for consistency
+        print(f"Sentiment: {sentiment}")
+        return sentiment
+    except Exception as e:
+        print("Error generating sentiment:", e)
         raise
 
 # Helper function to format timestamps
