@@ -83,6 +83,7 @@ This system leverages **AI** to analyze **video** and **audio** content for vari
      ```
    - **Backend**:
      ```bash
+     venv\scripts\activate
      cd backend
      pip install -r requirements.txt
      ```
